@@ -1,3 +1,4 @@
+console.log("LOADED TMCF3X LOGGER SERVER");
 const express = require("express");
 const cors = require("cors");
 
