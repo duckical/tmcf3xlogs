@@ -1,0 +1,29 @@
+body{
+
+    margin:0;
+    background:#121212;
+    color:white;
+    font-family:monospace;
+
+}
+
+h1{
+
+    text-align:center;
+    padding:20px;
+
+}
+
+#console{
+
+    width:90%;
+    margin:auto;
+    background:#1e1e1e;
+    border:1px solid #333;
+    border-radius:10px;
+    height:80vh;
+    overflow-y:auto;
+    padding:15px;
+    white-space:pre-wrap;
+
+}
