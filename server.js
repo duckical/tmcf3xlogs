@@ -118,6 +118,19 @@ app.get("/test", (req, res) => {
     res.send("Test route works");
 });
 
+app.get("/routes", (req, res) => {
+    res.json({
+        routes: [
+            "POST /log",
+            "POST /info",
+            "GET /logs",
+            "GET /info",
+            "POST /clear"
+        ]
+    });
+});
+
+
 
 
 
