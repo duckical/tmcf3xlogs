@@ -1,61 +1,124 @@
 const express = require("express");
-const fs = require("fs");
+const cors = require("cors");
 
 const app = express();
 
+const PORT = process.env.PORT || 3000;
+
+
+app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
-const PORT = process.env.PORT || 3000;
 
 let logs = [];
 
-function addLog(text) {
+let serverInfo = {
+    jobId: "Unknown",
+    players: 0,
+    maxPlayers: 0,
+    placeId: "Unknown",
+    started: new Date().toISOString()
+};
 
-    const line = `[${new Date().toLocaleTimeString()}] ${text}`;
 
-    console.log(line);
-
-    logs.push(line);
-
-    if (logs.length > 500)
-        logs.shift();
-
-    fs.writeFileSync("logs.json", JSON.stringify(logs, null, 2));
-}
-
+// Receive Roblox logs
 app.post("/log", (req, res) => {
 
-    if (!req.body.message)
-        return res.sendStatus(400);
+    const log = {
+        id: Date.now(),
+        timestamp: new Date().toLocaleTimeString(),
+        ...req.body
+    };
 
-    addLog(req.body.message);
 
-    res.sendStatus(200);
+    logs.push(log);
+
+
+    // Keep only last 500 logs
+    if(logs.length > 500){
+        logs.shift();
+    }
+
+
+    console.log(
+        `[${log.type}] ${log.player || ""}: ${log.message || ""}`
+    );
+
+
+    res.json({
+        success:true
+    });
 
 });
 
-app.get("/logs", (req, res) => {
+
+
+// Receive server information
+app.post("/info", (req,res)=>{
+
+    serverInfo = {
+        ...serverInfo,
+        ...req.body
+    };
+
+
+    console.log("Server info updated");
+
+    res.json({
+        success:true
+    });
+
+});
+
+
+
+// Dashboard gets logs
+app.get("/logs",(req,res)=>{
 
     res.json(logs);
 
 });
 
-app.post("/clear", (req, res) => {
 
-    logs = [];
 
-    fs.writeFileSync("logs.json", JSON.stringify([], null, 2));
+// Dashboard gets server info
+app.get("/info",(req,res)=>{
 
-    console.clear();
-    console.log("Logs cleared.");
-
-    res.sendStatus(200);
+    res.json(serverInfo);
 
 });
 
-app.listen(PORT, () => {
 
-    addLog("Logger started.");
+
+// Clear dashboard logs
+app.post("/clear",(req,res)=>{
+
+    logs = [];
+
+    console.log("Logs cleared");
+
+    res.json({
+        success:true
+    });
+
+});
+
+
+
+// Health check for Railway
+app.get("/",(req,res)=>{
+
+    res.send("Roblox Logger Online");
+
+});
+
+
+
+app.listen(PORT,"0.0.0.0",()=>{
+
+    console.log(
+        "Roblox Logger running on port " + PORT
+    );
 
 });
