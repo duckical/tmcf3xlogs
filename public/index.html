@@ -1,12 +1,8 @@
 <!DOCTYPE html>
-
 <html>
-
 <head>
 
-<meta charset="UTF-8">
-
-<title>tmcf server logs</title>
+<title>tmcf3x server logs</title>
 
 <link rel="stylesheet" href="style.css">
 
@@ -14,14 +10,55 @@
 
 <body>
 
+<div class="top">
+
 <h1>logs:</h1>
 
-<button id="clear">clear logs</button>
+<div id="status">
+requesting...
+</div>
 
-<div id="console"></div>
+</div>
+
+
+<div class="buttons">
+
+<button onclick="clearLogs()">
+clear logs
+</button>
+
+<button onclick="copyLogs()">
+copy logs
+</button>
+
+<button onclick="downloadLogs()">
+download logs
+</button>
+
+<button onclick="togglePause()">
+pause scroll
+</button>
+
+</div>
+
+
+<div class="info">
+
+<h2>server info:</h2>
+
+<p id="serverInfo">
+requesting...
+</p>
+
+</div>
+
+
+<div id="logs">
+
+</div>
+
 
 <script src="script.js"></script>
 
 </body>
-
 </html>
