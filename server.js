@@ -41,6 +41,19 @@ app.get("/logs", (req, res) => {
 
 });
 
+app.post("/clear", (req, res) => {
+
+    logs = [];
+
+    fs.writeFileSync("logs.json", JSON.stringify([], null, 2));
+
+    console.clear();
+    console.log("Logs cleared.");
+
+    res.sendStatus(200);
+
+});
+
 app.listen(PORT, () => {
 
     addLog("Logger started.");
