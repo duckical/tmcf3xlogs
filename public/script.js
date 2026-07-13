@@ -34,6 +34,15 @@ async function update(){
 }
 
 
+async function resetServerInfo() {
+    await fetch("/reset-server", {
+        method: "POST"
+    });
+
+    alert("Server info reset!");
+    location.reload();
+}
+
 
 function displayLogs(){
 
