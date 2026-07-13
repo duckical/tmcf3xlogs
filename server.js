@@ -113,6 +113,11 @@ app.get("/",(req,res)=>{
 
 });
 
+app.get("/test", (req, res) => {
+    res.send("Test route works");
+});
+
+
 
 
 app.listen(PORT,"0.0.0.0",()=>{
