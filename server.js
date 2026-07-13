@@ -105,6 +105,18 @@ app.post("/clear",(req,res)=>{
 
 });
 
+app.post("/reset-server", (req, res) => {
+    serverInfo = {};
+
+    logs.push({
+        type: "system",
+        message: "Server info was reset",
+        time: Date.now()
+    });
+
+    res.sendStatus(200);
+});
+
 
 
 // Health check for Railway
@@ -126,6 +138,7 @@ app.get("/routes", (req, res) => {
             "GET /logs",
             "GET /info",
             "POST /clear"
+            "GET /test"
         ]
     });
 });
