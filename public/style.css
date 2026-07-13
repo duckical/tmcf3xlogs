@@ -14,6 +14,22 @@ h1{
 
 }
 
+#clear{
+    display:block;
+    margin:15px auto;
+    padding:12px 24px;
+    background:#ff4444;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+#clear:hover{
+    background:#ff2222;
+}
+
 #console{
 
     width:90%;
