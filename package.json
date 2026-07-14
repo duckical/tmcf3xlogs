@@ -1,7 +1,7 @@
 {
   "name": "tmcf3xlogs",
   "version": "1.3.0",
-  "description": "a log for servers in my friend's game that i have edit perms to tmcf3x",
+  "description": "a log for servers in my friend's game that i have edit perms to called tmcf3x",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
