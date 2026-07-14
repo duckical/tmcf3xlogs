@@ -152,8 +152,8 @@ function togglePause(){
 
     event.target.innerHTML =
     paused ? 
-    "Resume Scroll" :
-    "Pause Scroll";
+    "resume scroll" :
+    "pause scroll";
 
 }
 
