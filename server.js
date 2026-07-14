@@ -57,7 +57,7 @@ app.post("/info", (req, res) => {
         ...req.body
     };
 
-    console.log("Server info updated");
+    console.log("server information up-to-date!");
 
     res.json({
         success: true
@@ -109,8 +109,8 @@ app.post("/reset-server", (req, res) => {
 
     logs.push({
         id: Date.now(),
-        type: "system",
-        message: "Server info was reset",
+        type: "System",
+        message: "server information was reset!",
         timestamp: new Date().toLocaleTimeString()
     });
 
