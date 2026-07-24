@@ -2,37 +2,47 @@ let paused = false;
 
 let logs = [];
 
+let lastLogCount = 0;
+
+const notificationSound = new Audio("notification.mp3");
+// notificationSound.volume = 0.5; // Optional (0.0 - 1.0)
+
 const API = "";
 
+async function update() {
 
-async function update(){
-
-    try{
+    try {
 
         let response = await fetch(API + "/logs");
 
         logs = await response.json();
 
+        // Play a notification for new logs
+        if (lastLogCount !== 0 && logs.length > lastLogCount) {
+
+            // Play once for each new log
+            for (let i = lastLogCount; i < logs.length; i++) {
+                notificationSound.currentTime = 0;
+                notificationSound.play().catch(() => {});
+            }
+
+        }
+
+        lastLogCount = logs.length;
 
         displayLogs();
 
-
-        document.getElementById("status").innerHTML =
-        "Online";
-
+        document.getElementById("status").innerHTML = "Online";
 
     }
 
-    catch(error){
+    catch (error) {
 
-        document.getElementById("status").innerHTML =
-        "Offline";
+        document.getElementById("status").innerHTML = "Offline";
 
     }
-
 
 }
-
 
 async function resetServerInfo() {
     await fetch("/reset-server", {
@@ -43,138 +53,101 @@ async function resetServerInfo() {
     location.reload();
 }
 
-
-function displayLogs(){
+function displayLogs() {
 
     let box = document.getElementById("logs");
 
-    let oldScroll =
-    box.scrollTop;
+    let oldScroll = box.scrollTop;
 
+    box.innerHTML = "";
 
-    box.innerHTML="";
-
-
-    logs.forEach(log=>{
-
+    logs.forEach(log => {
 
         let type = log.type.toLowerCase();
 
+        let css = "";
 
-        let css="";
+        if (type.includes("chat"))
+            css = "chat";
 
+        else if (type.includes("message"))
+            css = "message";
 
-        if(type.includes("chat"))
-            css="chat";
+        else if (type.includes("hint"))
+            css = "hint";
 
-        else if(type.includes("message"))
-            css="message";
+        else if (type.includes("join"))
+            css = "join";
 
-        else if(type.includes("hint"))
-            css="hint";
-
-        else if(type.includes("join"))
-            css="join";
-
-        else if(type.includes("leave"))
-            css="leave";
-
-
+        else if (type.includes("leave"))
+            css = "leave";
 
         box.innerHTML += `
-
         <div class="log ${css}">
 
-        <div class="time">
-        ${log.timestamp || ""}
-        </div>
+            <div class="time">
+                ${log.timestamp || ""}
+            </div>
 
+            <b>${log.type}</b>
 
-        <b>${log.type}</b>
+            <br>
 
+            ${log.player ? "Player: " + log.player + "<br>" : ""}
 
-        <br>
-
-
-        ${log.player ? 
-        "Player: "+log.player+"<br>" : ""}
-
-
-        ${log.message || ""}
-
+            ${log.message || ""}
 
         </div>
-
         `;
-
 
     });
 
-
-
-    if(!paused){
+    if (!paused) {
 
         box.scrollTop = box.scrollHeight;
 
-    }
-
-    else{
+    } else {
 
         box.scrollTop = oldScroll;
 
     }
 
-
 }
 
+async function clearLogs() {
 
-
-
-async function clearLogs(){
-
-    await fetch("/clear",{
-
-        method:"POST"
-
+    await fetch("/clear", {
+        method: "POST"
     });
-
 
     update();
 
 }
 
+function togglePause() {
 
-
-function togglePause(){
-
-    paused=!paused;
-
+    paused = !paused;
 
     event.target.innerHTML =
-    paused ? 
-    "resume scroll" :
-    "pause scroll";
+        paused
+            ? "resume scroll"
+            : "pause scroll";
 
 }
 
+function copyLogs() {
 
-
-function copyLogs(){
-
-    let text = logs.map(log=>{
+    let text = logs.map(log => {
 
         return `[${log.type}] ${log.player || ""}: ${log.message || ""}`;
 
     }).join("\n");
 
-
     navigator.clipboard.writeText(text);
 
 }
 
-
-
-function downloadLogs(){
+function downloadLogs() {
 
     let text = JSON.stringify(
         logs,
@@ -182,68 +155,48 @@ function downloadLogs(){
         2
     );
 
-
-    let blob =
-    new Blob(
+    let blob = new Blob(
         [text],
-        {type:"application/json"}
+        { type: "application/json" }
     );
 
+    let url = URL.createObjectURL(blob);
 
-    let url =
-    URL.createObjectURL(blob);
+    let a = document.createElement("a");
 
+    a.href = url;
 
-    let a=document.createElement("a");
-
-    a.href=url;
-
-    a.download="roblox_logs.json";
+    a.download = "roblox_logs.json";
 
     a.click();
 
+    URL.revokeObjectURL(url);
+
 }
 
+async function updateInfo() {
 
+    try {
 
-async function updateInfo(){
+        let res = await fetch("/info");
 
-    try{
-
-        let res =
-        await fetch("/info");
-
-
-        let info =
-        await res.json();
-
+        let info = await res.json();
 
         document.getElementById("serverInfo").innerHTML = `
-
-        JobId: ${info.jobId}<br>
-
-        Players: ${info.players}/${info.maxPlayers}<br>
-
-        PlaceId: ${info.placeId}<br>
-
-        Started: ${info.started}
-
+            JobId: ${info.jobId}<br>
+            Players: ${info.players}/${info.maxPlayers}<br>
+            PlaceId: ${info.placeId}<br>
+            Started: ${info.started}
         `;
-
 
     }
 
-    catch{}
+    catch {}
 
 }
 
-
-
-setInterval(update,2000);
-
-setInterval(updateInfo,5000);
-
+setInterval(update, 2000);
+setInterval(updateInfo, 5000);
 
 update();
-
 updateInfo();
